@@ -1,6 +1,6 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-  <WeatherWidget msg="Welcome to Your Vue.js + TypeScript App" />
+  <WeatherWidget />
 </template>
 
 <script lang="ts">

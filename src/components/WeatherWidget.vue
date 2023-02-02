@@ -3,9 +3,21 @@
     <div class="location">
       <!-- <h1>{{ city }}</h1> -->
       <h2>City</h2>
-      <!-- click to open the modal -->
-      <img class="location-settings" alt="settings" src="~@/assets/settings.svg" />
-      <SettingsModal></SettingsModal>
+      <img
+        class="location-settings"
+        @click="showModal"
+        alt="settings"
+        src="~@/assets/settings.svg"
+      />
+
+      <SettingsModal v-show="isModalVisible" @close="closeModal">
+        <template v-slot:header> Settings </template>
+        <template v-slot:body> City array </template>
+        <template v-slot:footer>
+          <div>Add Location</div>
+          <input placeholder="New York" />
+        </template>
+      </SettingsModal>
     </div>
     <div class="forecast">
       <!-- <h1>{{ temperature }}</h1> -->
@@ -43,13 +55,21 @@ export default defineComponent({
       { id: '5', text: 'Dev point', measure: '0 C' },
       { id: '6', text: 'Visibility', measure: '10.0km' },
     ],
-    showModal: false,
+    isModalVisible: false,
   }),
   props: {
     city: String,
   },
   components: {
     SettingsModal,
+  },
+  methods: {
+    showModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
   },
 });
 </script>
