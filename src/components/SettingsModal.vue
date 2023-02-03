@@ -8,16 +8,27 @@
         aria-describedby="modalDescription"
       >
         <header class="modal-header" id="modalTitle">
-          <slot name="header"> This is the default title! </slot>
+          <div class="modal-header-settings">Settings</div>
           <button type="button" class="btn-close" @click="close" aria-label="Close modal">x</button>
         </header>
 
         <section class="modal-body" id="modalDescription">
-          <slot name="body"> This is the default body! </slot>
+          <div>City array</div>
         </section>
 
         <footer class="modal-footer">
-          <slot name="footer"> This is the default footer! </slot>
+          <div>
+            <div class="modal-footer-add">Add Location:</div>
+            <div class="modal-footer-input">
+              <input placeholder="New York" />
+              <img
+                class="modal-footer-save"
+                @click="saveLocation"
+                alt="arrow"
+                src="~@/assets/arrow.svg"
+              />
+            </div>
+          </div>
         </footer>
       </div>
     </div>
@@ -33,15 +44,17 @@ export default defineComponent({
     close() {
       this.$emit('close');
     },
+    saveLocation() {
+      console.log('hhh');
+    },
   },
 });
 </script>
 
 <style scoped lang="scss">
-.settings {
-  width: 2rem;
-  height: 2rem;
-}
+$border-line: 1px solid #eeeeee;
+$main-color: #606060;
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -52,58 +65,73 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-.modal {
-  background: #ffffff;
-  box-shadow: 2px 2px 20px 1px;
-  overflow-x: auto;
-  display: flex;
-  flex-direction: column;
-}
+  .modal {
+    background: #ffffff;
+    //look
+    box-shadow: 2px 2px 20px 1px;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
 
-.modal-header,
-.modal-footer {
-  padding: 15px;
-  display: flex;
-}
+    &-header,
+    &-footer {
+      padding: 1rem;
+      display: flex;
+    }
 
-.modal-header {
-  position: relative;
-  border-bottom: 1px solid #eeeeee;
-  color: #4aae9b;
-  justify-content: space-between;
-}
+    &-header {
+      position: relative;
+      border-bottom: $border-line;
+      color: $main-color;
+      justify-content: space-between;
 
-.modal-footer {
-  border-top: 1px solid #eeeeee;
-  flex-direction: column;
-  justify-content: flex-end;
-}
+      &-settings {
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
 
-.modal-body {
-  position: relative;
-  padding: 20px 10px;
-}
+      .btn-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border: none;
+        font-size: 1.25rem;
+        padding: 0.75rem;
+        cursor: pointer;
+        font-weight: bold;
+        color: $main-color;
+        background: transparent;
+      }
+    }
 
-.btn-close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: none;
-  font-size: 20px;
-  padding: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #4aae9b;
-  background: transparent;
-}
+    &-body {
+      position: relative;
+      padding: 1.25rem 0.75rem;
+    }
 
-.btn-green {
-  color: white;
-  background: #4aae9b;
-  border: 1px solid #4aae9b;
-  border-radius: 2px;
+    &-footer {
+      border-top: $border-line;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      &-add {
+        display: flex;
+        justify-content: flex-start;
+        color: #606060;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      &-save {
+        width: 1rem;
+        height: 1rem;
+        margin-left: 0.5rem;
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 .modal-fade-enter,

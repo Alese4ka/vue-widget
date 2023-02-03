@@ -9,15 +9,7 @@
         alt="settings"
         src="~@/assets/settings.svg"
       />
-
-      <SettingsModal v-show="isModalVisible" @close="closeModal">
-        <template v-slot:header> Settings </template>
-        <template v-slot:body> City array </template>
-        <template v-slot:footer>
-          <div>Add Location</div>
-          <input placeholder="New York" />
-        </template>
-      </SettingsModal>
+      <SettingsModal v-show="isModalVisible" @close="closeModal"> </SettingsModal>
     </div>
     <div class="forecast">
       <!-- <h1>{{ temperature }}</h1> -->
@@ -102,10 +94,10 @@ export default defineComponent({
       font-size: 3rem;
     }
 
-    //delete
     &-settings {
       width: 5rem;
       height: 5rem;
+      cursor: pointer;
     }
   }
 
