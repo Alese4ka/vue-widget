@@ -3,12 +3,10 @@
     <div class="location">
       <!-- <h1>{{ city }}</h1> -->
       <h2>City</h2>
-      <img
-        class="location-settings"
-        @click="showModal"
-        alt="settings"
-        src="~@/assets/settings.svg"
-      />
+      <button @click="showModal">
+        <img class="location-settings" alt="settings" src="~@/assets/settings.svg" />
+      </button>
+
       <SettingsModal v-show="isModalVisible" @close="closeModal"> </SettingsModal>
     </div>
     <div class="forecast">

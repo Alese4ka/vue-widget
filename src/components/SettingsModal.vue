@@ -21,14 +21,17 @@
               <transition-group type="transition" name="flip-list">
                 <div class="list-group-item" v-for="element in list" :key="element.name">
                   <!-- <img class="list-group-item-grab" alt="grab" src="~@/assets/grab.svg" /> -->
-                  <v-icon class="handle">mdi-menu</v-icon>
+                  <v-icon class="handle"
+                    ><img class="list-group-item-grab" alt="grab" src="~@/assets/grab.svg"
+                  /></v-icon>
                   {{ element.name }}
-                  <img
-                    class="list-group-item-delete"
-                    @click="deleteLocation"
-                    alt="delete"
-                    src="~@/assets/delete.svg"
-                  /></div
+                  <button class="list-group-item-btn" @click="deleteLocation(element)">
+                    <img
+                      class="list-group-item-btn-delete"
+                      alt="delete"
+                      src="~@/assets/delete.svg"
+                    />
+                  </button></div
               ></transition-group>
             </draggable>
           </div>
@@ -36,15 +39,20 @@
 
         <footer class="modal-footer">
           <div>
-            <div class="modal-footer-add">Add Location:</div>
             <div class="modal-footer-input">
-              <input placeholder="New York" />
-              <img
-                class="modal-footer-save"
-                @click="saveLocation"
-                alt="arrow"
-                src="~@/assets/arrow.svg"
-              />
+              <label for="city" class="modal-footer-add"
+                >Add Location:
+                <input
+                  class="modal-footer-add-input"
+                  type="text"
+                  id="city"
+                  ref="inputField"
+                  placeholder="Insert a city"
+                  @keyup.enter="saveLocation"
+              /></label>
+              <button class="modal-footer-btn" @click="saveLocation">
+                <img class="modal-footer-btn-save" alt="arrow" src="~@/assets/arrow.svg" />
+              </button>
             </div>
           </div>
         </footer>
@@ -53,7 +61,7 @@
   </transition>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { VueDraggableNext } from 'vue-draggable-next';
@@ -66,12 +74,7 @@ export default defineComponent({
   data() {
     return {
       enabled: true,
-      list: [
-        { name: 'John', id: 1 },
-        { name: 'Joao', id: 2 },
-        { name: 'Jean', id: 3 },
-        { name: 'Gerard', id: 4 },
-      ],
+      list: [{ name: 'John' }, { name: 'Joao' }, { name: 'Jean' }, { name: 'Gerard' }],
       dragging: false,
     };
   },
@@ -80,7 +83,18 @@ export default defineComponent({
       this.$emit('close');
     },
     saveLocation() {
-      console.log('hhh');
+      const message = this.$refs.inputField.value;
+      if (message) {
+        this.list.push({
+          name: message,
+        });
+        this.$refs.inputField.value = '';
+      }
+    },
+    deleteLocation(element: any) {
+      const currentItemId = this.list.findIndex((item) => item === element);
+      console.log(element, this.list, currentItemId);
+      this.list.splice(currentItemId, 1);
     },
   },
 });
@@ -90,6 +104,13 @@ export default defineComponent({
 $main-color: #606060;
 $secondary-color: #eeeeee;
 $border-line: 1px solid $secondary-color;
+
+@mixin reset-btn {
+  border: none;
+  background-color: #ffffff;
+  padding: 0;
+  margin: 0;
+}
 
 .modal-backdrop {
   position: fixed;
@@ -161,9 +182,14 @@ $border-line: 1px solid $secondary-color;
           cursor: move;
         }
 
-        &-delete {
-          width: 1rem;
-          height: 1rem;
+        &-btn {
+          @include reset-btn;
+          background-color: $secondary-color;
+
+          &-delete {
+            width: 1rem;
+            height: 1rem;
+          }
         }
       }
     }
@@ -175,17 +201,32 @@ $border-line: 1px solid $secondary-color;
 
       &-add {
         display: flex;
-        justify-content: flex-start;
+        flex-direction: column;
+        text-align: left;
         color: $main-color;
         font-size: 0.8rem;
         font-weight: 600;
+
+        &-input {
+          padding: 0.25rem 2.5rem 0.25rem 0.15rem;
+        }
       }
 
-      &-save {
-        width: 1rem;
-        height: 1rem;
-        margin-left: 0.5rem;
-        cursor: pointer;
+      &-input {
+        display: flex;
+        justify-content: space-between;
+        margin-right: 0.5rem;
+      }
+
+      &-btn {
+        @include reset-btn;
+
+        &-save {
+          width: 1rem;
+          height: 1rem;
+          margin-top: 1rem;
+          cursor: pointer;
+        }
       }
     }
   }
