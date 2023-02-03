@@ -1,3 +1,4 @@
+<!-- eslint-disable no-param-reassign -->
 <template>
   <transition name="modal-fade">
     <div class="modal-backdrop">
@@ -9,11 +10,28 @@
       >
         <header class="modal-header" id="modalTitle">
           <div class="modal-header-settings">Settings</div>
-          <button type="button" class="btn-close" @click="close" aria-label="Close modal">x</button>
+          <button type="button" class="btn-close" @click="closeModal" aria-label="Close modal">
+            x
+          </button>
         </header>
 
         <section class="modal-body" id="modalDescription">
-          <div>City array</div>
+          <div class="modal-body-cities">
+            <draggable class="list-group" :list="list" handle=".handle">
+              <transition-group type="transition" name="flip-list">
+                <div class="list-group-item" v-for="element in list" :key="element.name">
+                  <!-- <img class="list-group-item-grab" alt="grab" src="~@/assets/grab.svg" /> -->
+                  <v-icon class="handle">mdi-menu</v-icon>
+                  {{ element.name }}
+                  <img
+                    class="list-group-item-delete"
+                    @click="deleteLocation"
+                    alt="delete"
+                    src="~@/assets/delete.svg"
+                  /></div
+              ></transition-group>
+            </draggable>
+          </div>
         </section>
 
         <footer class="modal-footer">
@@ -35,13 +53,30 @@
   </transition>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { VueDraggableNext } from 'vue-draggable-next';
 
 export default defineComponent({
   name: 'SettingsModal',
+  components: {
+    draggable: VueDraggableNext,
+  },
+  data() {
+    return {
+      enabled: true,
+      list: [
+        { name: 'John', id: 1 },
+        { name: 'Joao', id: 2 },
+        { name: 'Jean', id: 3 },
+        { name: 'Gerard', id: 4 },
+      ],
+      dragging: false,
+    };
+  },
   methods: {
-    close() {
+    closeModal() {
       this.$emit('close');
     },
     saveLocation() {
@@ -52,8 +87,9 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-$border-line: 1px solid #eeeeee;
 $main-color: #606060;
+$secondary-color: #eeeeee;
+$border-line: 1px solid $secondary-color;
 
 .modal-backdrop {
   position: fixed;
@@ -74,6 +110,7 @@ $main-color: #606060;
     display: flex;
     flex-direction: column;
     font-size: 1rem;
+    width: 16rem;
 
     &-header,
     &-footer {
@@ -109,6 +146,26 @@ $main-color: #606060;
     &-body {
       position: relative;
       padding: 1.25rem 0.75rem;
+
+      .list-group-item {
+        background-color: $secondary-color;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &-grab {
+          width: 1.5rem;
+          height: 1.5rem;
+          cursor: move;
+        }
+
+        &-delete {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
     }
 
     &-footer {
@@ -119,7 +176,7 @@ $main-color: #606060;
       &-add {
         display: flex;
         justify-content: flex-start;
-        color: #606060;
+        color: $main-color;
         font-size: 0.8rem;
         font-weight: 600;
       }
@@ -142,5 +199,12 @@ $main-color: #606060;
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.5s ease;
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.no-move {
+  transition: transform 0s;
 }
 </style>
