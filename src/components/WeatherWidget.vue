@@ -1,30 +1,45 @@
 <template>
   <div class="wrapper">
     <div class="location">
-      <!-- <h1>{{ city }}</h1> -->
-      <h2>City</h2>
-      <button @click="showModal">
-        <img class="location-settings" alt="settings" src="~@/assets/settings.svg" />
+      <h2>{{ city }}, {{ country }}</h2>
+      <button class="location-btn" @click="showModal">
+        <img class="location-btn-settings" alt="settings" src="~@/assets/settings.svg" />
       </button>
 
-      <SettingsModal v-show="isModalVisible" @close="closeModal"> </SettingsModal>
+      <SettingsModal v-show="isModalVisible" @close="closeModal" @city="getLocation">
+      </SettingsModal>
     </div>
     <div class="forecast">
-      <!-- <h1>{{ temperature }}</h1> -->
-      <h1 class="forecast-temp">26 &deg;C</h1>
-      <img class="forecast-settings" alt="sun" src="~@/assets/images.jpeg" />
+      <h1 class="forecast-temp">{{ temperature }} &deg;C</h1>
+      <img class="forecast-weather" alt="weather" v-bind:src="icon" />
     </div>
-    <p>Broken clouds. Light breeze</p>
+    <p>{{ main }}. {{ description }}</p>
     <div class="weather-block">
-      <div
-        class="weather"
-        v-for="item in items"
-        :key="item.id"
-        :text="item.text"
-        :measure="item.measure"
-      >
-        <div class="weather-text">{{ item.text }}</div>
-        <div class="weather-measure">{{ item.measure }}</div>
+      <div class="weather">
+        <div class="weather-wrapper">
+          <div class="weather-wrapper-text">Real feel</div>
+          <div class="weather-wrapper-measure">{{ realFeel }} &deg;C</div>
+        </div>
+        <div class="weather-wrapper">
+          <div class="weather-wrapper-text">Wind</div>
+          <div class="weather-wrapper-measure">{{ wind }} m/s</div>
+        </div>
+        <div class="weather-wrapper">
+          <div class="weather-wrapper-text">Pressure</div>
+          <div class="weather-wrapper-measure">{{ pressure }} hPa</div>
+        </div>
+        <div class="weather-wrapper">
+          <div class="weather-wrapper-text">Humidity</div>
+          <div class="weather-wrapper-measure">{{ humidity }} %</div>
+        </div>
+        <div class="weather-wrapper">
+          <div class="weather-wrapper-text">Dev point</div>
+          <div class="weather-wrapper-measure">{{ devPoint }} &deg;C</div>
+        </div>
+        <div class="weather-wrapper">
+          <div class="weather-wrapper-text">Visibility</div>
+          <div class="weather-wrapper-measure">{{ visibility }} km</div>
+        </div>
       </div>
     </div>
   </div>
@@ -37,49 +52,112 @@ import SettingsModal from './SettingsModal.vue';
 export default defineComponent({
   name: 'WeatherWidget',
   data: () => ({
-    items: [
-      { id: '1', text: 'Real feel', measure: '23 C' },
-      { id: '2', text: 'Wind', measure: '12 m/s' },
-      { id: '3', text: 'Pressure', measure: '1021hPa' },
-      { id: '4', text: 'Humidity', measure: '97%' },
-      { id: '5', text: 'Dev point', measure: '0 C' },
-      { id: '6', text: 'Visibility', measure: '10.0km' },
-    ],
+    city: 'London',
+    country: '',
+    API_KEY: 'ea7f2ec7419b33064accc22aac5169a6',
+    url_base: 'https://api.openweathermap.org/data/2.5/',
+    query: '',
+    temperature: 0,
+    icon: '',
+    main: '',
+    description: '',
+    realFeel: 0,
+    wind: 0,
+    pressure: 0,
+    humidity: 0,
+    devPoint: 0,
+    visibility: 0,
+    measures: [],
     isModalVisible: false,
   }),
-  props: {
-    city: String,
-  },
   components: {
     SettingsModal,
   },
   methods: {
-    showModal() {
+    showModal(): void {
       this.isModalVisible = true;
     },
-    closeModal() {
+
+    closeModal(): void {
       this.isModalVisible = false;
     },
+
+    getLocation(childData: any): void {
+      this.city = childData;
+      this.fetchWeather(childData);
+    },
+
+    fetchWeather(city: string): void {
+      this.fetchToAPI(city);
+    },
+
+    fetchToAPI(city: string): void {
+      fetch(
+        `${this.url_base}weather?q=${this.query ? this.query : city}&units=metric&appid=${
+          this.API_KEY
+        }`,
+      )
+        .then((res) => res.json())
+        .then(this.setResults)
+        .catch((err) => console.log(err));
+    },
+
+    setResults(results: any): void {
+      console.log('🚀 ~ file: WeatherWidget.vue:89 ~ setResults ~ results', results);
+      this.country = results.sys.country;
+      this.temperature = Math.round(results.main.temp);
+      // eslint-disable-next-line no-template-curly-in-string
+      this.icon = `https://openweathermap.org/img/wn/${results.weather[0].icon}@2x.png`;
+      this.main = results.weather[0].main;
+      const desc = results.weather[0].description;
+      this.description = desc.charAt(0).toUpperCase() + desc.slice(1);
+      this.realFeel = Math.round(results.main.feels_like);
+      this.wind = results.wind.speed;
+      this.pressure = results.main.pressure;
+      this.humidity = results.main.humidity;
+      this.devPoint = Math.round(results.main.temp_min);
+      this.visibility = results.visibility / 1000;
+    },
+  },
+  mounted() {
+    this.fetchWeather(this.city);
   },
 });
 </script>
 
 <style scoped lang="scss">
+$main-color: #065ddd;
+$secondary-color: #ffffff;
+
+@mixin reset-btn {
+  border: none;
+  background-color: $secondary-color;
+  padding: 0;
+  margin: 0;
+}
+
 .wrapper {
   width: 20rem;
-  height: 30rem;
-  background: rgb(217, 217, 228);
+  height: 32rem;
+  background: $main-color;
   border-radius: 1rem;
+  color: $secondary-color;
+
   .location {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 0 1rem;
 
-    &-settings {
-      width: 2rem;
-      height: 2rem;
-      cursor: pointer;
+    &-btn {
+      @include reset-btn;
+      background-color: $main-color;
+
+      &-settings {
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+      }
     }
   }
 
@@ -88,7 +166,7 @@ export default defineComponent({
     justify-content: space-evenly;
 
     &-temp {
-      margin: 0;
+      margin: auto 0;
       padding: 0;
       font-size: 3rem;
     }
@@ -108,12 +186,16 @@ export default defineComponent({
 
     .weather {
       display: flex;
-      flex-direction: column;
-      margin: 1rem 0;
-      width: 8rem;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
 
-      &-measure {
-        font-size: 1.5rem;
+      &-wrapper {
+        width: 8rem;
+        margin: 1rem;
+
+        &-measure {
+          font-size: 1.5rem;
+        }
       }
     }
   }

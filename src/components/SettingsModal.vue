@@ -17,22 +17,24 @@
 
         <section class="modal-body" id="modalDescription">
           <div class="modal-body-cities">
-            <draggable class="list-group" :list="list" handle=".handle">
+            <draggable class="list-group" :list="cityList" handle=".handle">
               <transition-group type="transition" name="flip-list">
-                <div class="list-group-item" v-for="element in list" :key="element.name">
-                  <!-- <img class="list-group-item-grab" alt="grab" src="~@/assets/grab.svg" /> -->
+                <div class="list-group-item" v-for="city in cityList" :key="city.name">
                   <v-icon class="handle"
                     ><img class="list-group-item-grab" alt="grab" src="~@/assets/grab.svg"
                   /></v-icon>
-                  {{ element.name }}
-                  <button class="list-group-item-btn" @click="deleteLocation(element)">
+                  <button class="list-group-item-set" @click="setLocation(city)">
+                    {{ city.name }}
+                  </button>
+                  <button class="list-group-item-btn" @click="deleteLocation(city)">
                     <img
                       class="list-group-item-btn-delete"
                       alt="delete"
                       src="~@/assets/delete.svg"
                     />
-                  </button></div
-              ></transition-group>
+                  </button>
+                </div>
+              </transition-group>
             </draggable>
           </div>
         </section>
@@ -46,7 +48,7 @@
                   class="modal-footer-add-input"
                   type="text"
                   id="city"
-                  ref="inputField"
+                  v-model="city"
                   placeholder="Insert a city"
                   @keyup.enter="saveLocation"
               /></label>
@@ -66,6 +68,10 @@ import { defineComponent } from 'vue';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { VueDraggableNext } from 'vue-draggable-next';
 
+type Item = {
+  name: string;
+};
+
 export default defineComponent({
   name: 'SettingsModal',
   components: {
@@ -74,27 +80,33 @@ export default defineComponent({
   data() {
     return {
       enabled: true,
-      list: [{ name: 'John' }, { name: 'Joao' }, { name: 'Jean' }, { name: 'Gerard' }],
+      cityList: [{ name: 'London' }],
       dragging: false,
+      city: '',
     };
   },
   methods: {
-    closeModal() {
+    closeModal(): void {
       this.$emit('close');
     },
-    saveLocation() {
-      const message = this.$refs.inputField.value;
-      if (message) {
-        this.list.push({
-          name: message,
+
+    saveLocation(): void {
+      if (this.city) {
+        this.cityList.push({
+          name: this.city,
         });
-        this.$refs.inputField.value = '';
+        this.city = '';
       }
     },
-    deleteLocation(element: any) {
-      const currentItemId = this.list.findIndex((item) => item === element);
-      console.log(element, this.list, currentItemId);
-      this.list.splice(currentItemId, 1);
+
+    deleteLocation(element: Item): void {
+      const currentItemId = this.cityList.findIndex((item) => item === element);
+      this.cityList.splice(currentItemId, 1);
+    },
+
+    setLocation(element: Item): void {
+      this.$emit('city', element.name);
+      this.closeModal();
     },
   },
 });
@@ -176,6 +188,12 @@ $border-line: 1px solid $secondary-color;
         align-items: center;
         justify-content: space-between;
 
+        &-set {
+          @include reset-btn;
+          background-color: $secondary-color;
+          cursor: pointer;
+        }
+
         &-grab {
           width: 1.5rem;
           height: 1.5rem;
@@ -189,6 +207,7 @@ $border-line: 1px solid $secondary-color;
           &-delete {
             width: 1rem;
             height: 1rem;
+            cursor: pointer;
           }
         }
       }
