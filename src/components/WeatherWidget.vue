@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+// eslint-disable-next-line import/extensions
 import SettingsModal from './SettingsModal.vue';
 
 export default defineComponent({

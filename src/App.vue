@@ -1,10 +1,10 @@
 <template>
-  <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
   <WeatherWidget />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+// eslint-disable-next-line import/extensions
 import WeatherWidget from './components/WeatherWidget.vue';
 
 export default defineComponent({
