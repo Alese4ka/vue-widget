@@ -95,19 +95,30 @@ export default defineComponent({
         this.cityList.push({
           name: this.city,
         });
+        localStorage.setItem('cityList', JSON.stringify(this.cityList));
         this.city = '';
       }
     },
 
     deleteLocation(element: Item): void {
-      const currentItemId = this.cityList.findIndex((item) => item === element);
+      const currentItemId = this.cityList.findIndex((item: Item) => item === element);
       this.cityList.splice(currentItemId, 1);
+      localStorage.setItem('cityList', JSON.stringify(this.cityList));
     },
 
     setLocation(element: Item): void {
       this.$emit('city', element.name);
       this.closeModal();
     },
+  },
+  mounted() {
+    if (localStorage.getItem('cityList')) {
+      try {
+        this.cityList = JSON.parse(localStorage.getItem('cityList')!);
+      } catch (e) {
+        localStorage.removeItem('cityList');
+      }
+    }
   },
 });
 </script>

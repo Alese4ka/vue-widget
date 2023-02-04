@@ -52,11 +52,11 @@ import SettingsModal from './SettingsModal.vue';
 export default defineComponent({
   name: 'WeatherWidget',
   data: () => ({
-    city: 'London',
-    country: '',
     API_KEY: 'ea7f2ec7419b33064accc22aac5169a6',
     url_base: 'https://api.openweathermap.org/data/2.5/',
     query: '',
+    city: 'London',
+    country: '',
     temperature: 0,
     icon: '',
     main: '',
@@ -103,6 +103,10 @@ export default defineComponent({
     },
 
     setResults(results: any): void {
+      // CHANGE
+      if (results.cod === '404') {
+        this.city = results.message;
+      }
       console.log('🚀 ~ file: WeatherWidget.vue:89 ~ setResults ~ results', results);
       this.country = results.sys.country;
       this.temperature = Math.round(results.main.temp);
