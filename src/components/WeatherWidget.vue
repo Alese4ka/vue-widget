@@ -56,7 +56,7 @@ export default defineComponent({
     API_KEY: 'ea7f2ec7419b33064accc22aac5169a6',
     url_base: 'https://api.openweathermap.org/data/2.5/',
     query: '',
-    city: 'London',
+    city: '',
     country: '',
     temperature: 0,
     icon: '',
@@ -108,7 +108,7 @@ export default defineComponent({
       if (results.cod === '404') {
         this.city = results.message;
       }
-      console.log('🚀 ~ file: WeatherWidget.vue:89 ~ setResults ~ results', results);
+      //
       this.country = results.sys.country;
       this.temperature = Math.round(results.main.temp);
       // eslint-disable-next-line no-template-curly-in-string
@@ -123,9 +123,17 @@ export default defineComponent({
       this.devPoint = Math.round(results.main.temp_min);
       this.visibility = results.visibility / 1000;
     },
+    async getGeolocationInformation() {
+      const API_KEY = '835fd7b8b00d4cad9953656caf096036';
+      const API_URL = `https://ipgeolocation.abstractapi.com/v1/?api_key=${API_KEY}`;
+      const apiResponse = await fetch(API_URL);
+      const data = await apiResponse.json();
+      this.city = data.city;
+      this.fetchWeather(this.city);
+    },
   },
   mounted() {
-    this.fetchWeather(this.city);
+    this.getGeolocationInformation();
   },
 });
 </script>

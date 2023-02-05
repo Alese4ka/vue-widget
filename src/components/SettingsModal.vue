@@ -12,6 +12,7 @@
           flexDirection: 'column',
           fontSize: '1rem',
           width: '16rem',
+          borderRadius: '0.75rem',
         }"
         role="dialog"
         aria-labelledby="modalTitle"
@@ -29,7 +30,7 @@
           }"
           id="modalTitle"
         >
-          <div class="modal-header-settings" :style="{ fontSize: '0.8rem' }">Settings</div>
+          <div class="modal-header-settings" :style="{ fontSize: '1rem' }">Settings</div>
           <button
             type="button"
             class="btn-close"
@@ -57,13 +58,21 @@
           :style="{ position: 'relative', padding: '1.25rem 0.75rem' }"
           id="modalDescription"
         >
-          <div class="modal-body-cities">
+          <div
+            v-if="cityList.length === 0"
+            :style="{
+              color: '#065ddd',
+            }"
+          >
+            You don't have favorite cities
+          </div>
+          <div class="modal-body-cities" v-else>
             <draggable class="list-group" :list="cityList" handle=".handle">
               <transition-group type="transition" name="flip-list">
                 <div
                   class="list-group-item"
                   :style="{
-                    backgroundColor: '#eeeeee',
+                    backgroundColor: '#065ddd',
                     marginBottom: '0.75rem',
                     padding: '0.5rem',
                     display: 'flex',
@@ -90,8 +99,9 @@
                       border: 'none',
                       padding: '0',
                       margin: '0',
-                      backgroundColor: '#eeeeee',
+                      backgroundColor: '#065ddd',
                       cursor: 'pointer',
+                      color: '#ffffff',
                     }"
                     @click="setLocation(city)"
                   >
@@ -103,7 +113,7 @@
                       border: 'none',
                       padding: '0',
                       margin: '0',
-                      backgroundColor: '#eeeeee',
+                      backgroundColor: '#065ddd',
                       cursor: 'pointer',
                     }"
                     @click="deleteLocation(city)"
@@ -212,7 +222,7 @@ export default defineComponent({
   data() {
     return {
       enabled: true,
-      cityList: [{ name: 'London' }],
+      cityList: JSON.parse(localStorage.getItem('cityList')!) || [],
       dragging: false,
       city: '',
     };
