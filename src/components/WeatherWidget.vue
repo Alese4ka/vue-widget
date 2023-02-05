@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div id="app" class="wrapper">
     <div class="location">
       <h2>{{ city }}, {{ country }}</h2>
       <button class="location-btn" @click="showModal">
@@ -141,12 +141,28 @@ $secondary-color: #ffffff;
   margin: 0;
 }
 
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .wrapper {
   width: 20rem;
   height: 32rem;
   background: $main-color;
   border-radius: 1rem;
   color: $secondary-color;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
 
   .location {
     display: flex;

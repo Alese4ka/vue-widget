@@ -4,31 +4,116 @@
     <div class="modal-backdrop">
       <div
         class="modal"
+        :style="{
+          background: '#ffffff',
+          boxShadow: '2px 2px 20px 1px',
+          overflowX: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          fontSize: '1rem',
+          width: '16rem',
+        }"
         role="dialog"
         aria-labelledby="modalTitle"
         aria-describedby="modalDescription"
       >
-        <header class="modal-header" id="modalTitle">
-          <div class="modal-header-settings">Settings</div>
-          <button type="button" class="btn-close" @click="closeModal" aria-label="Close modal">
+        <header
+          class="modal-header"
+          :style="{
+            padding: '1rem',
+            display: 'flex',
+            position: 'relative',
+            borderBottom: '1px solid #eeeeee',
+            color: 'black',
+            justifyContent: 'space-between',
+          }"
+          id="modalTitle"
+        >
+          <div class="modal-header-settings" :style="{ fontSize: '0.8rem' }">Settings</div>
+          <button
+            type="button"
+            class="btn-close"
+            :style="{
+              position: 'absolute',
+              top: '0',
+              right: '0',
+              border: 'none',
+              fontSize: '1.25rem',
+              padding: '0.75rem',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              color: 'black',
+              background: 'transparent',
+            }"
+            @click="closeModal"
+            aria-label="Close modal"
+          >
             x
           </button>
         </header>
 
-        <section class="modal-body" id="modalDescription">
+        <section
+          class="modal-body"
+          :style="{ position: 'relative', padding: '1.25rem 0.75rem' }"
+          id="modalDescription"
+        >
           <div class="modal-body-cities">
             <draggable class="list-group" :list="cityList" handle=".handle">
               <transition-group type="transition" name="flip-list">
-                <div class="list-group-item" v-for="city in cityList" :key="city.name">
+                <div
+                  class="list-group-item"
+                  :style="{
+                    backgroundColor: '#eeeeee',
+                    marginBottom: '0.75rem',
+                    padding: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }"
+                  v-for="city in cityList"
+                  :key="city.name"
+                >
                   <v-icon class="handle"
-                    ><img class="list-group-item-grab" alt="grab" src="~@/assets/grab.svg"
+                    ><img
+                      class="list-group-item-grab"
+                      :style="{
+                        width: '1.5rem',
+                        height: '1.5rem',
+                        cursor: 'move',
+                      }"
+                      alt="grab"
+                      src="~@/assets/grab.svg"
                   /></v-icon>
-                  <button class="list-group-item-set" @click="setLocation(city)">
+                  <button
+                    class="list-group-item-set"
+                    :style="{
+                      border: 'none',
+                      padding: '0',
+                      margin: '0',
+                      backgroundColor: '#eeeeee',
+                      cursor: 'pointer',
+                    }"
+                    @click="setLocation(city)"
+                  >
                     {{ city.name }}
                   </button>
-                  <button class="list-group-item-btn" @click="deleteLocation(city)">
+                  <button
+                    class="list-group-item-btn"
+                    :style="{
+                      border: 'none',
+                      padding: '0',
+                      margin: '0',
+                      backgroundColor: '#eeeeee',
+                      cursor: 'pointer',
+                    }"
+                    @click="deleteLocation(city)"
+                  >
                     <img
                       class="list-group-item-btn-delete"
+                      :style="{
+                        width: '1rem',
+                        height: '1rem',
+                      }"
                       alt="delete"
                       src="~@/assets/delete.svg"
                     />
@@ -39,21 +124,68 @@
           </div>
         </section>
 
-        <footer class="modal-footer">
+        <footer
+          class="modal-footer"
+          :style="{
+            padding: '1rem',
+            display: 'flex',
+            borderTop: '1px solid #eeeeee',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }"
+        >
           <div>
-            <div class="modal-footer-input">
-              <label for="city" class="modal-footer-add"
+            <div
+              class="modal-footer-input"
+              :style="{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginRight: '0.5rem',
+              }"
+            >
+              <label
+                for="city"
+                class="modal-footer-add"
+                :style="{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  textAlign: 'left',
+                  color: 'black',
+                  fontSize: '0.8rem',
+                }"
                 >Add Location:
                 <input
                   class="modal-footer-add-input"
+                  :style="{
+                    padding: '0.25rem 2.5rem 0.25rem 0.15rem',
+                  }"
                   type="text"
                   id="city"
                   v-model="city"
                   placeholder="Insert a city"
                   @keyup.enter="saveLocation"
               /></label>
-              <button class="modal-footer-btn" @click="saveLocation">
-                <img class="modal-footer-btn-save" alt="arrow" src="~@/assets/arrow.svg" />
+              <button
+                class="modal-footer-btn"
+                :style="{
+                  border: 'none',
+                  padding: '0',
+                  margin: '0',
+                  backgroundColor: '#ffffff',
+                  cursor: 'pointer',
+                }"
+                @click="saveLocation"
+              >
+                <img
+                  class="modal-footer-btn-save"
+                  :style="{
+                    width: '1rem',
+                    height: '1rem',
+                    marginTop: '1rem',
+                  }"
+                  alt="arrow"
+                  src="~@/assets/arrow.svg"
+                />
               </button>
             </div>
           </div>
@@ -122,160 +254,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped lang="scss">
-$main-color: #606060;
-$secondary-color: #eeeeee;
-$border-line: 1px solid $secondary-color;
-
-@mixin reset-btn {
-  border: none;
-  background-color: #ffffff;
-  padding: 0;
-  margin: 0;
-}
-
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .modal {
-    background: #ffffff;
-    //look
-    box-shadow: 2px 2px 20px 1px;
-    overflow-x: auto;
-    display: flex;
-    flex-direction: column;
-    font-size: 1rem;
-    width: 16rem;
-
-    &-header,
-    &-footer {
-      padding: 1rem;
-      display: flex;
-    }
-
-    &-header {
-      position: relative;
-      border-bottom: $border-line;
-      color: $main-color;
-      justify-content: space-between;
-
-      &-settings {
-        font-size: 0.8rem;
-        font-weight: 600;
-      }
-
-      .btn-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border: none;
-        font-size: 1.25rem;
-        padding: 0.75rem;
-        cursor: pointer;
-        font-weight: bold;
-        color: $main-color;
-        background: transparent;
-      }
-    }
-
-    &-body {
-      position: relative;
-      padding: 1.25rem 0.75rem;
-
-      .list-group-item {
-        background-color: $secondary-color;
-        margin-bottom: 0.75rem;
-        padding: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        &-set {
-          @include reset-btn;
-          background-color: $secondary-color;
-          cursor: pointer;
-        }
-
-        &-grab {
-          width: 1.5rem;
-          height: 1.5rem;
-          cursor: move;
-        }
-
-        &-btn {
-          @include reset-btn;
-          background-color: $secondary-color;
-
-          &-delete {
-            width: 1rem;
-            height: 1rem;
-            cursor: pointer;
-          }
-        }
-      }
-    }
-
-    &-footer {
-      border-top: $border-line;
-      flex-direction: column;
-      justify-content: flex-end;
-
-      &-add {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-        color: $main-color;
-        font-size: 0.8rem;
-        font-weight: 600;
-
-        &-input {
-          padding: 0.25rem 2.5rem 0.25rem 0.15rem;
-        }
-      }
-
-      &-input {
-        display: flex;
-        justify-content: space-between;
-        margin-right: 0.5rem;
-      }
-
-      &-btn {
-        @include reset-btn;
-
-        &-save {
-          width: 1rem;
-          height: 1rem;
-          margin-top: 1rem;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-}
-
-.modal-fade-enter,
-.modal-fade-leave-to {
-  opacity: 0;
-}
-
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.flip-list-move {
-  transition: transform 0.5s;
-}
-.no-move {
-  transition: transform 0s;
-}
-</style>
