@@ -1,16 +1,9 @@
 <template>
   <div class="wrapper">
-    <div v-if="noData">
-      <h1 class="wrapper-no-data">{{ message }}</h1>
-      <button class="location-btn" @click="showModal">
-        <img
-          class="location-btn-settings"
-          alt="settings"
-          src="https://i.postimg.cc/2ydfW7yR/settings.png"
-        />
-      </button>
-      <SettingsModal v-show="isModalVisible" @close="closeModal" @city="getLocation">
-      </SettingsModal>
+    <div v-if="isLoading">
+      <div>
+        <div class="loader"></div>
+      </div>
     </div>
     <div v-else>
       <div class="location">
@@ -87,8 +80,8 @@ export default defineComponent({
     visibility: 0,
     measures: [],
     isModalVisible: false,
-    noData: false,
     message: '',
+    isLoading: false,
   }),
   components: {
     SettingsModal,
@@ -123,24 +116,19 @@ export default defineComponent({
     },
 
     setResults(results: any): void {
-      if (results.cod === '404') {
-        this.message = results.message;
-        this.noData = true;
-      } else {
-        this.noData = false;
-        this.country = results.sys.country;
-        this.temperature = Math.round(results.main.temp);
-        this.icon = `https://openweathermap.org/img/wn/${results.weather[0].icon}@2x.png`;
-        this.main = results.weather[0].main;
-        const desc = results.weather[0].description;
-        this.description = desc.charAt(0).toUpperCase() + desc.slice(1);
-        this.realFeel = Math.round(results.main.feels_like);
-        this.wind = results.wind.speed;
-        this.pressure = results.main.pressure;
-        this.humidity = results.main.humidity;
-        this.devPoint = Math.round(results.main.temp_min);
-        this.visibility = results.visibility / 1000;
-      }
+      this.isLoading = false;
+      this.country = results.sys.country;
+      this.temperature = Math.round(results.main.temp);
+      this.icon = `https://openweathermap.org/img/wn/${results.weather[0].icon}@2x.png`;
+      this.main = results.weather[0].main;
+      const desc = results.weather[0].description;
+      this.description = desc.charAt(0).toUpperCase() + desc.slice(1);
+      this.realFeel = Math.round(results.main.feels_like);
+      this.wind = results.wind.speed;
+      this.pressure = results.main.pressure;
+      this.humidity = results.main.humidity;
+      this.devPoint = Math.round(results.main.temp_min);
+      this.visibility = results.visibility / 1000;
     },
 
     async getGeolocationInformation() {
@@ -153,7 +141,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.noData = false;
+    this.isLoading = true;
     this.getGeolocationInformation();
   },
 });
@@ -183,11 +171,6 @@ $secondary-color: #ffffff;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 
-  &-no-data {
-    margin: 11rem 0 1rem;
-    font-size: 1rem;
-    text-transform: uppercase;
-  }
   .location {
     display: flex;
     justify-content: space-between;
@@ -242,6 +225,35 @@ $secondary-color: #ffffff;
           font-size: 1.5rem;
         }
       }
+    }
+  }
+
+  .loader {
+    display: inline-block;
+    width: 4rem;
+    height: 4rem;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
+  .loader:after {
+    content: ' ';
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+    border-radius: 50%;
+    border: 0.25rem solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: loader 0.7s linear infinite;
+  }
+  @keyframes loader {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
 }
