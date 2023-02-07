@@ -1,44 +1,61 @@
 <template>
   <div class="wrapper">
-    <div class="location">
-      <h2>{{ city }}, {{ country }}</h2>
+    <div v-if="noData">
+      <h1 class="wrapper-no-data">{{ message }}</h1>
       <button class="location-btn" @click="showModal">
-        <img class="location-btn-settings" alt="settings" src="~@/assets/settings.svg" />
+        <img
+          class="location-btn-settings"
+          alt="settings"
+          src="https://alese4ka.github.io/vue-widget/img/settings.svg"
+        />
       </button>
-
       <SettingsModal v-show="isModalVisible" @close="closeModal" @city="getLocation">
       </SettingsModal>
     </div>
-    <div class="forecast">
-      <h1 class="forecast-temp">{{ temperature }} &deg;C</h1>
-      <img class="forecast-weather" alt="weather" v-bind:src="icon" />
-    </div>
-    <p>{{ main }}. {{ description }}</p>
-    <div class="weather-block">
-      <div class="weather">
-        <div class="weather-wrapper">
-          <div class="weather-wrapper-text">Real feel</div>
-          <div class="weather-wrapper-measure">{{ realFeel }} &deg;C</div>
-        </div>
-        <div class="weather-wrapper">
-          <div class="weather-wrapper-text">Wind</div>
-          <div class="weather-wrapper-measure">{{ wind }} m/s</div>
-        </div>
-        <div class="weather-wrapper">
-          <div class="weather-wrapper-text">Pressure</div>
-          <div class="weather-wrapper-measure">{{ pressure }} hPa</div>
-        </div>
-        <div class="weather-wrapper">
-          <div class="weather-wrapper-text">Humidity</div>
-          <div class="weather-wrapper-measure">{{ humidity }} %</div>
-        </div>
-        <div class="weather-wrapper">
-          <div class="weather-wrapper-text">Dev point</div>
-          <div class="weather-wrapper-measure">{{ devPoint }} &deg;C</div>
-        </div>
-        <div class="weather-wrapper">
-          <div class="weather-wrapper-text">Visibility</div>
-          <div class="weather-wrapper-measure">{{ visibility }} km</div>
+    <div v-else>
+      <div class="location">
+        <h2>{{ city }}, {{ country }}</h2>
+        <button class="location-btn" @click="showModal">
+          <img
+            class="location-btn-settings"
+            alt="settings"
+            src="https://alese4ka.github.io/vue-widget/img/settings.svg"
+          />
+        </button>
+        <SettingsModal v-show="isModalVisible" @close="closeModal" @city="getLocation">
+        </SettingsModal>
+      </div>
+      <div class="forecast">
+        <h1 class="forecast-temp">{{ temperature }} &deg;C</h1>
+        <img class="forecast-weather" alt="weather" v-bind:src="icon" />
+      </div>
+      <p>{{ main }}. {{ description }}</p>
+      <div class="weather-block">
+        <div class="weather">
+          <div class="weather-wrapper">
+            <div class="weather-wrapper-text">Real feel</div>
+            <div class="weather-wrapper-measure">{{ realFeel }} &deg;C</div>
+          </div>
+          <div class="weather-wrapper">
+            <div class="weather-wrapper-text">Wind</div>
+            <div class="weather-wrapper-measure">{{ wind }} m/s</div>
+          </div>
+          <div class="weather-wrapper">
+            <div class="weather-wrapper-text">Pressure</div>
+            <div class="weather-wrapper-measure">{{ pressure }} hPa</div>
+          </div>
+          <div class="weather-wrapper">
+            <div class="weather-wrapper-text">Humidity</div>
+            <div class="weather-wrapper-measure">{{ humidity }} %</div>
+          </div>
+          <div class="weather-wrapper">
+            <div class="weather-wrapper-text">Dev point</div>
+            <div class="weather-wrapper-measure">{{ devPoint }} &deg;C</div>
+          </div>
+          <div class="weather-wrapper">
+            <div class="weather-wrapper-text">Visibility</div>
+            <div class="weather-wrapper-measure">{{ visibility }} km</div>
+          </div>
         </div>
       </div>
     </div>
@@ -70,6 +87,8 @@ export default defineComponent({
     visibility: 0,
     measures: [],
     isModalVisible: false,
+    noData: false,
+    message: '',
   }),
   components: {
     SettingsModal,
@@ -104,25 +123,26 @@ export default defineComponent({
     },
 
     setResults(results: any): void {
-      // CHANGE
       if (results.cod === '404') {
-        this.city = results.message;
+        this.message = results.message;
+        this.noData = true;
+      } else {
+        this.noData = false;
+        this.country = results.sys.country;
+        this.temperature = Math.round(results.main.temp);
+        this.icon = `https://openweathermap.org/img/wn/${results.weather[0].icon}@2x.png`;
+        this.main = results.weather[0].main;
+        const desc = results.weather[0].description;
+        this.description = desc.charAt(0).toUpperCase() + desc.slice(1);
+        this.realFeel = Math.round(results.main.feels_like);
+        this.wind = results.wind.speed;
+        this.pressure = results.main.pressure;
+        this.humidity = results.main.humidity;
+        this.devPoint = Math.round(results.main.temp_min);
+        this.visibility = results.visibility / 1000;
       }
-      //
-      this.country = results.sys.country;
-      this.temperature = Math.round(results.main.temp);
-      // eslint-disable-next-line no-template-curly-in-string
-      this.icon = `https://openweathermap.org/img/wn/${results.weather[0].icon}@2x.png`;
-      this.main = results.weather[0].main;
-      const desc = results.weather[0].description;
-      this.description = desc.charAt(0).toUpperCase() + desc.slice(1);
-      this.realFeel = Math.round(results.main.feels_like);
-      this.wind = results.wind.speed;
-      this.pressure = results.main.pressure;
-      this.humidity = results.main.humidity;
-      this.devPoint = Math.round(results.main.temp_min);
-      this.visibility = results.visibility / 1000;
     },
+
     async getGeolocationInformation() {
       const API_KEY = '835fd7b8b00d4cad9953656caf096036';
       const API_URL = `https://ipgeolocation.abstractapi.com/v1/?api_key=${API_KEY}`;
@@ -133,6 +153,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.noData = false;
     this.getGeolocationInformation();
   },
 });
@@ -149,18 +170,6 @@ $secondary-color: #ffffff;
   margin: 0;
 }
 
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .wrapper {
   width: 20rem;
   height: 30rem;
@@ -174,6 +183,11 @@ $secondary-color: #ffffff;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 
+  &-no-data {
+    margin: 11rem 0 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
   .location {
     display: flex;
     justify-content: space-between;
