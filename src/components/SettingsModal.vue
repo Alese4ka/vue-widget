@@ -15,18 +15,22 @@
         </header>
 
         <section class="modal-body" id="modalDescription">
-          <div class="modal-body-cities">
+          <div class="modal-body-no-data" v-if="cityList.length === 0">
+            You don't have favorite cities
+          </div>
+          <div class="modal-body-cities" v-else>
             <draggable class="list-group" :list="cityList" handle=".handle">
               <transition-group type="transition" name="flip-list">
                 <div class="list-group-item" v-for="city in cityList" :key="city.name">
-                  <v-icon class="handle"
-                    ><img
+                  <button class="handle">
+                    <img
                       class="list-group-item-grab"
                       alt="grab"
                       src="https://i.postimg.cc/brShvjcJ/grab.png"
-                  /></v-icon>
+                    />
+                  </button>
                   <button class="list-group-item-set" @click="setLocation(city)">
-                    {{ city.name }}
+                    {{ city.name }}, {{ city.country }}
                   </button>
                   <button class="list-group-item-btn" @click="deleteLocation(city)">
                     <img
@@ -43,6 +47,7 @@
 
         <footer class="modal-footer">
           <div>
+            <div v-show="isRepeat" class="modal-footer-repeat">{{ cityError }}</div>
             <div class="modal-footer-input">
               <label for="city" class="modal-footer-add"
                 >Add Location:
@@ -85,9 +90,15 @@ export default defineComponent({
   data() {
     return {
       enabled: true,
-      cityList: [{ name: 'London' }],
+      cityList: [{ name: '', country: '' }],
       dragging: false,
       city: '',
+      country: '',
+      cityError: '',
+      isRepeat: false,
+      API_KEY: 'ea7f2ec7419b33064accc22aac5169a6',
+      url_base: 'https://api.openweathermap.org/data/2.5/',
+      query: '',
     };
   },
   methods: {
@@ -97,12 +108,39 @@ export default defineComponent({
 
     saveLocation(): void {
       if (this.city) {
+        fetch(
+          `${this.url_base}weather?q=${this.query ? this.query : this.city}&units=metric&appid=${
+            this.API_KEY
+          }`,
+        )
+          .then((res) => res.json())
+          .then(this.setResults)
+          .catch((err) => this.isError(err));
+      }
+    },
+
+    setResults(results: any): void {
+      this.country = results.sys.country;
+      const findRepeatCity = this.cityList.find((item) => item.name === this.city);
+      if (!findRepeatCity) {
         this.cityList.push({
           name: this.city,
+          country: this.country,
         });
         localStorage.setItem('cityList', JSON.stringify(this.cityList));
         this.city = '';
+        this.isRepeat = false;
+      } else {
+        this.cityError = 'You already have this city';
+        this.isRepeat = true;
+        this.city = '';
       }
+    },
+
+    isError(err: any) {
+      this.cityError = "This city doesn't exist";
+      this.isRepeat = true;
+      this.city = '';
     },
 
     deleteLocation(element: Item): void {
@@ -117,6 +155,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.isRepeat = false;
     if (localStorage.getItem('cityList')) {
       try {
         this.cityList = JSON.parse(localStorage.getItem('cityList')!);
@@ -196,6 +235,10 @@ $border-line: 1px solid #eeeeee;
       position: relative;
       padding: 1.25rem 0.75rem;
 
+      &-no-data {
+        color: $secondary-color;
+      }
+
       .list-group-item {
         background-color: $secondary-color;
         margin-bottom: 0.75rem;
@@ -235,6 +278,11 @@ $border-line: 1px solid #eeeeee;
       border-top: $border-line;
       flex-direction: column;
       justify-content: flex-end;
+
+      &-repeat {
+        color: #cc1212;
+        margin-bottom: 1rem;
+      }
 
       &-add {
         display: flex;
