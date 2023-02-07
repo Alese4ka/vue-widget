@@ -1,14 +1,17 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { optimize } from 'webpack';
+const webpack = require('webpack');
 
-export const filenameHashing = false;
-export const configureWebpack = {
-  plugins: [
-    new optimize.LimitChunkCountPlugin({
-      maxChunks: 1,
-    }),
-  ],
+module.exports = {
+  publicPath: '/vue-widget/',
+  filenameHashing: false,
+  configureWebpack: {
+    plugins: [
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 1,
+      }),
+    ],
+  },
+  chainWebpack: (config) => {
+    config.optimization.delete('splitChunks');
+  },
 };
-export function chainWebpack(config) {
-  config.optimization.delete('splitChunks');
-}

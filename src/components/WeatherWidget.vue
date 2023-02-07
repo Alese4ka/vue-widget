@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="wrapper">
+  <div class="wrapper">
     <div class="location">
       <h2>{{ city }}, {{ country }}</h2>
       <button class="location-btn" @click="showModal">
@@ -163,7 +163,9 @@ $secondary-color: #ffffff;
 
 .wrapper {
   width: 20rem;
-  height: 32rem;
+  height: 30rem;
+  margin: 1rem auto;
+  padding-top: 1rem;
   background: $main-color;
   border-radius: 1rem;
   color: $secondary-color;

@@ -168,6 +168,7 @@
                   class="modal-footer-add-input"
                   :style="{
                     padding: '0.25rem 2.5rem 0.25rem 0.15rem',
+                    border: '1px solid #cfcfcf',
                   }"
                   type="text"
                   id="city"
