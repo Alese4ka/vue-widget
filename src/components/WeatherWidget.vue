@@ -6,7 +6,7 @@
         <img
           class="location-btn-settings"
           alt="settings"
-          src="https://alese4ka.github.io/vue-widget/img/settings.svg"
+          src="https://i.postimg.cc/2ydfW7yR/settings.png"
         />
       </button>
       <SettingsModal v-show="isModalVisible" @close="closeModal" @city="getLocation">
@@ -19,7 +19,7 @@
           <img
             class="location-btn-settings"
             alt="settings"
-            src="https://alese4ka.github.io/vue-widget/img/settings.svg"
+            src="https://i.postimg.cc/2ydfW7yR/settings.png"
           />
         </button>
         <SettingsModal v-show="isModalVisible" @close="closeModal" @city="getLocation">

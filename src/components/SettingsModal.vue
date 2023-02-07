@@ -23,7 +23,7 @@
                     ><img
                       class="list-group-item-grab"
                       alt="grab"
-                      src="https://alese4ka.github.io/vue-widget/img/grab.svg"
+                      src="https://i.postimg.cc/brShvjcJ/grab.png"
                   /></v-icon>
                   <button class="list-group-item-set" @click="setLocation(city)">
                     {{ city.name }}
@@ -32,7 +32,7 @@
                     <img
                       class="list-group-item-btn-delete"
                       alt="delete"
-                      src="https://alese4ka.github.io/vue-widget/img/delete.svg"
+                      src="https://i.postimg.cc/MKr9DjQh/trash.png"
                     />
                   </button>
                 </div>
@@ -58,7 +58,7 @@
                 <img
                   class="modal-footer-btn-save"
                   alt="arrow"
-                  src="https://alese4ka.github.io/vue-widget/img/arrow.svg"
+                  src="https://i.postimg.cc/RF12XPGh/arrow.png"
                 />
               </button>
             </div>
@@ -221,8 +221,10 @@ $border-line: 1px solid #eeeeee;
           background-color: $secondary-color;
 
           &-delete {
-            width: 1rem;
-            height: 1rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            display: flex;
+            align-items: center;
             cursor: pointer;
           }
         }
